@@ -15,23 +15,6 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 --]]
 
--- @name    	distance
--- @desc    	distance between two points
--- @author     	spec8320
--- @returns     number
-
-function distance(x1, y1, x2, y2)
-    -- Check if all arguments are numbers
-    if type(x1) ~= "number" or type(y1) ~= "number" or type(x2) ~= "number" or type(y2) ~= "number" then
-        error("All arguments must be numbers")
-    end
-    
-    -- Calculate the distance using the Euclidean formula
-    local distance = math.sqrt((x2 - x1)^2 + (y2 - y1)^2)
-    
-    return distance
-end
-
 --[[
         Constants
 --]]
@@ -141,150 +124,194 @@ function mppc()
     end
 end
 
--- @name    sstime
--- @desc    check if its ss time (from 9:55 AM till 10:10 AM)
+-- @name    distance
+-- @desc    distance between two points
 -- @author  spec8320
--- @returns boolean
+-- @returns number
 
-function sstime()
-    return 600 >= secondtillss() or 85800 <= secondtillss()
+function distance(x1, y1, x2, y2)
+    -- Check if all arguments are numbers
+    if type(x1) ~= "number" or type(y1) ~= "number" or type(x2) ~= "number" or type(y2) ~= "number" then
+        error("All arguments must be numbers")
+    end
+    
+    -- Calculate the distance using the Euclidean formula
+    local distance = math.sqrt((x2 - x1)^2 + (y2 - y1)^2)
+    
+    return distance
 end
+
+-- @name    creatureonscreen
+-- @desc    check if monster/player/NPC is on screen
+-- @author  Loro
+-- @returns bool
+
+function creatureonscreen(name)
+    if type(name) ~= "string" then error("Monster name must be a string") end
+
+	local creatures = getcreatures()
+
+	for _, c in ipairs(creatures) do
+		if c:name() == name then
+			return true
+		end
+	end
+
+	return false
+end
+
+-- @name    paround
+-- @desc    return number of players in range
+-- @author  Loro
+-- @returns number
+
+function paround(range)
+    if type(range) ~= "number" then error("Range must be a number") end
+	
+    local creatures = getcreatures()
+    local playersAround = 0
+
+	for _, c in ipairs(creatures) do
+		if math.floor(c:dist()) <= range and c:type() == CREATURE_TYPE_PLAYER then
+            playersAround = playersAround + 1
+		end
+	end
+
+	return playersAround
+end
+
+-- @name    maround
+-- @desc    return number of players in range
+-- @author  Loro
+-- @returns number
+
+function maround(range)
+    if type(range) ~= "number" then error("Range must be a number") end
+
+	local creatures = getcreatures()
+    local monstersAround = 0
+    
+	for _, c in ipairs(creatures) do
+		if math.floor(c:dist()) <= range and c:type() == CREATURE_TYPE_MONSTER then
+
+            monstersAround = monstersAround + 1
+		end
+	end
+
+	return monstersAround
+end
+
+-- @name    saround
+-- @desc    return number of summons in range
+-- @author  Loro
+-- @returns number
+
+function saround(range)
+    if type(range) ~= "number" then error("Range must be a number") end
+
+	local creatures = getcreatures()
+    local around = 0
+    
+	for _, c in ipairs(creatures) do
+		if math.floor(c:dist()) <= range and (c:type() == CREATURE_TYPE_PLAYER_SUMMON or c:type() == CREATURE_TYPE_OTHER_SUMMON) then
+            around = around + 1
+		end
+	end
+
+	return around
+end
+
+
+-- @name    naround
+-- @desc    return number of NPC in range
+-- @author  Loro
+-- @returns number
+
+function naround(range, name)
+    if type(range) ~= "number" then error("Range must be a number") end
+
+	local creatures = getcreatures()
+    local around = 0
+    
+	for _, c in ipairs(creatures) do
+        if name ~= nil and c:name() == name  then
+            return 1;
+        end
+
+		if math.floor(c:dist()) <= range and c:type() == CREATURE_TYPE_NPC then
+            around = around + 1
+		end
+	end
+
+	return around
+end
+
+
+-- @name    reachnpc
+-- @desc    follows/reach npc range by name
+-- @author  Loro
+-- @returns nothing
+
+function reachnpc(name)
+    if type(name) ~= "string" then error("Npc name must be a string") end
+
+	local creatures = getcreatures()
+    
+	for _, c in ipairs(creatures) do
+		if c:type() == CREATURE_TYPE_NPC and c:name() == name then
+            local cPos = c:pos()
+            local tile = gettiles(cPos.x, cPos.y, cPos.z)
+            
+            if tilereachable(tile) then 
+                follow(c:id())
+
+                return
+            end
+            -- TO FINISH WHEN GOTOXYZ WILL BE IMPLEMENTED
+            -- for x = 1, 3 do
+            --     for y = 1, 3 do 
+            --         local tile = gettiles(cPos.x + x, cPos.y + y, cPos.z) 
+                    
+            --         if tilereachable(tile) then 
+            --             walk(tile.x, tile.y, tile.z)
+
+            --             return
+            --         end
+            --     end
+            -- end
+
+		end
+	end
+end
+
+-- @name    reachlocation
+-- @desc    reach location specified by params
+-- @author  szulak
+-- @returns nil
+
+function reachlocation(x, y, z)
+    while posx() ~= x or posy() ~= y do
+        steplocation(x,y,z)
+        wait(50)
+    end
+end
+
+
+
+
 
 --[[
-        Helper functions
+Extensions
 --]]
 
--- @name    secondtillss
--- @desc    returns time till ss in seconds if 0 means that its ss time and 86400 means that there is 24h till next
--- @author  spec8320
--- @returns number
-
-function secondtillss()
-    return (36000 - cettime()) % 86400
-end
-
--- @name    cettime
--- @desc    get CET time
--- @author  spec8320
--- @returns number
-
-function cettime()
-    return utctime() - utcoffset() + cetoffset()
-end
-
--- @name    utctime
--- @desc    get UTC time
--- @author  spec8320
--- @returns number
-
-function utctime()
-    local t = os.date('!%X')
-
-    -- Apparently os.date('!%X') returns the time with AM/PM appended on some
-    -- computers; this ignores anything before and after the actual timestamp
-    t = t:match('(%d%d:%d%d:%d%d)')
-
-    return tosec(t)
-end
-
--- @name    utcoffset
--- @desc    get UTC timezone offset
--- @author  spec8320
--- @returns number
-
-function utcoffset()
-    local now = os.time()
-
-    return os.difftime(os.time(os.date("!*t", now)), now)
-end
-
--- @name    cetoffset
--- @desc    get CET timezone offset
--- @author  spec8320
--- @returns number
-
-function cetoffset()
-    -- See the difference an 'n' can do?
-    local function iscest()
-        -- List taken from http://www.timeanddate.com/time/zone/germany/frankfurt
-        local daylightDates = {
-            [2013] = {90, 300},
-            [2014] = {89, 299},
-            [2015] = {88, 298},
-            [2016] = {87, 304},
-            [2017] = {85, 302},
-            [2018] = {84, 301},
-            [2019] = {90, 300},
-            [2023] = {91, 301},
-            [2024] = {87, 302},
-            [2025] = {90, 300},
-        }
-
-        local now = os.date('!*t')
-        local daylightDate = daylightDates[now.year]
-
-        return now.yday >= daylightDate[1] and now.yday <= daylightDate[2]
+function table.contains(table, element)
+    for _, value in pairs(table) do
+      if value == element then
+        return true
+      end
     end
-
-    return utcoffset() + tern(iscest(), 7200, 3600)
-end
-
--- @name    tosec
--- @desc    converting date format to seconds
--- @author  spec8320
--- @returns number
-
-function tosec(str)
-	local sum, time, units, index = 0, str:token(nil, ":"), {86400, 3600, 60, 1}, 1
-
-	for i = #units - #time + 1, #units do
-		sum, index = sum + ((tonumber(time[index]) or 0) * units[i]), index + 1
-	end
-
-	return math.max(sum, 0)
-end
-
--- @name    tern
--- @desc    Helper for the ternary operator that Lua lacks. Returns `expr2` if `expr1` is true, `expr3` otherwise.
--- @author  spec8320
---
--- @param     {any}          expr1          - The expression to be evaluated
--- @param     {any}          expr2          - The expression to be returned if
---                                            `expr1` evaluates to true
--- @param     {any}          expr3          - The expression to be returned if
---                                            `expr1` evaluates to false
---
--- @returns   {any}                         - `expr2` or `expr3`
---
-function tern(expr1, expr2, expr3)
-    if expr1 then
-        return expr2
-    else
-        return expr3
-    end
-end
-
--- @name    token
--- @desc    split token string with delimiter
--- @author  spec8320
--- @returns string
-
-function string:token(n,delimiter)
-	delimiter = delimiter or ' +'
-	local result = {}
-	local from = 1
-	local delim_from, delim_to = self:find(delimiter,from)
-	while delim_from do
-		table.insert(result, self:sub(from,delim_from-1))
-		from = delim_to + 1
-		delim_from, delim_to = self:find(delimiter,from)
-	end
-	table.insert(result,self:sub(from))
-	if n then
-		return result[n]
-	end
-	return result
-end
+    return false
+  end
 
 --[[
         Built-in functions (implemented in C++)
