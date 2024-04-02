@@ -1701,7 +1701,7 @@ function finditemindex(itemlist, itemid)
 end
 
 --- @name    sstime
---- @author  spec8320 (original code owner https://github.com/Tibia-WindBot/raphael-library)
+--- @author  raphael (original code repo https://github.com/Tibia-WindBot/raphael-library)
 --- @desc    check if its server save time (from 9:55 AM till 10:10 AM)
 --- @return  boolean
 function sstime()
@@ -1713,7 +1713,7 @@ end
 --]]
 
 --- returns time till server save in seconds. 0 means that it's ss time and 86400 means that there is 24h till next
---- @author spec8320 (original code owner https://github.com/Tibia-WindBot/raphael-library)
+--- @author raphael (original code repo https://github.com/Tibia-WindBot/raphael-library)
 --- @return number
 function secondtillss()
     return (36000 - cettime()) % 86400
@@ -1739,14 +1739,14 @@ function distance(x1, y1, x2, y2)
 end
 
 --- get CET time
---- @author  spec8320 (original code owner https://github.com/Tibia-WindBot/raphael-library)
+--- @author  raphael (original code repo https://github.com/Tibia-WindBot/raphael-library)
 --- @return  number
 function cettime()
     return utctime() - utcoffset() + cetoffset()
 end
 
 --- get UTC time
---- @author  spec8320 (original code owner https://github.com/Tibia-WindBot/raphael-library)
+--- @author  raphael (original code repo https://github.com/Tibia-WindBot/raphael-library)
 --- @return  number
 function utctime()
     local t = os.date("!%X")
@@ -1767,7 +1767,7 @@ function utcoffset()
 end
 
 --- get CET timezone offset
---- @author  spec8320 (original code owner https://github.com/Tibia-WindBot/raphael-library)
+--- @author  raphael (original code repo https://github.com/Tibia-WindBot/raphael-library)
 --- @return  number
 function cetoffset()
     -- See the difference an 'n' can do?
@@ -1796,7 +1796,7 @@ function cetoffset()
 end
 
 --- converting date format string to seconds
---- @author  spec8320 (original code owner https://github.com/Tibia-WindBot/raphael-library)
+--- @author  raphael (original code repo https://github.com/Tibia-WindBot/raphael-library)
 --- @param   str string
 --- @return  number
 function tosec(str)
@@ -1810,7 +1810,7 @@ function tosec(str)
 end
 
 --- Helper for the ternary operator that Lua lacks. Returns `expr2` if `expr1` is true, `expr3` otherwise.
---- @author spec8320 (original code owner https://github.com/Tibia-WindBot/raphael-library)
+--- @author raphael (original code repo https://github.com/Tibia-WindBot/raphael-library)
 --- @param expr1 any
 --- @param expr2 any
 --- @param expr3 any
@@ -2545,7 +2545,7 @@ Extensions
 --]]
 
 --- checks if given element exists in the table
---- @author  spec8320 (original code owner https://github.com/Tibia-WindBot/raphael-library)
+--- @author  raphael (original code repo https://github.com/Tibia-WindBot/raphael-library)
 --- @param   table any[]
 --- @param   element any
 --- @return  boolean
@@ -2582,7 +2582,7 @@ function table.shuffle(self)
 end
 
 --- split token string with delimiter
---- @author spec8320 (original code owner https://github.com/Tibia-WindBot/raphael-library)
+--- @author raphael (original code repo https://github.com/Tibia-WindBot/raphael-library)
 --- @return string
 function string:token(n, delimiter)
     delimiter = delimiter or " +"
