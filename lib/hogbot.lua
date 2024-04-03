@@ -3393,3 +3393,93 @@ function gloothbags()
         end
     end
 end
+
+--- log to bash console with colors and date format
+--- @author  spec8320
+--- @param   logtype type
+--- @param   param1, param2, parm3 messages
+function logtoconsolewithcolors(logtype, ...)
+
+    local msg = ""
+    local messages = {...}
+    for i, message in ipairs(messages) do
+        msg = msg .. tostring(message) .. " "
+    end
+
+    local color = "\27[32m" -- info
+
+    if logtype == "trace" then
+        color = "\27[34m"
+    end
+
+    if logtype == "debug" then
+        color = "\27[36m"
+    end
+
+    if logtype == "warn" then
+        color = "\27[33m"
+    end
+
+    if logtype == "error" then
+        color = "\27[31m"
+    end
+
+    if logtype == "fatal" then
+        color = "\27[35m"
+    end
+    local nameupper = logtype:upper()
+
+    -- Output to console
+    print(
+        string.format(
+            "%s[%-6s%s]%s: %s",
+            color,
+            nameupper,
+            os.date("%Y-%m-%d %H:%M:%S"),
+            "\27[0m",
+            msg
+        )
+    )
+end
+
+--- log info to bash console
+--- @author  spec8320
+--- @param   param1, param2, parm3 messages
+function loginfo(...) 
+	logtoconsolewithcolors("info", ...)
+end
+
+--- log trace to bash console
+--- @author  spec8320
+--- @param   param1, param2, parm3 messages
+function logtrace(...) 
+	logtoconsolewithcolors("trace", ...)
+end
+
+--- log debug to bash console
+--- @author  spec8320
+--- @param   param1, param2, parm3 messages
+function logdebug(...) 
+	logtoconsolewithcolors("debug", ...)
+end
+
+--- log warn to bash console
+--- @author  spec8320
+--- @param   param1, param2, parm3 messages
+function logwarn(...) 
+	logtoconsolewithcolors("warn", ...)
+end
+
+--- log error to bash console
+--- @author  spec8320
+--- @param   param1, param2, parm3 messages
+function logerror(...) 
+	logtoconsolewithcolors("error", ...)
+end
+
+--- log fatal to bash console
+--- @author  spec8320
+--- @param   param1, param2, parm3 messages
+function logfatal(...) 
+	logtoconsolewithcolors("fatal", ...)
+end
